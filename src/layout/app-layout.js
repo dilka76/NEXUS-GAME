@@ -1,10 +1,18 @@
 import { renderFooter } from '../components/footer/footer.js'
-import { renderHeader } from '../components/header/header.js'
+import { renderHeader, attachHeaderListeners } from '../components/header/header.js'
 
-export function renderAppLayout({ pathname, content }) {
+export async function renderAppLayout({ pathname, content }) {
+  const headerResult = await renderHeader(pathname)
+  const headerHTML = typeof headerResult === 'string' ? headerResult : headerResult.html
+
+  // Use setTimeout to attach listeners after DOM is updated
+  setTimeout(() => {
+    attachHeaderListeners()
+  }, 0)
+
   return `
     <div class="app-shell d-flex flex-column">
-      ${renderHeader(pathname)}
+      ${headerHTML}
       <main class="app-main flex-grow-1">
         ${content}
       </main>

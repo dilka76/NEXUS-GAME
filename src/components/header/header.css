@@ -120,6 +120,18 @@
   box-shadow: 0 0 15px rgba(238, 244, 255, 0.3);
 }
 
+.text-accent {
+  color: var(--accent) !important;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.navbar-text {
+  font-size: 0.85rem;
+  color: rgba(244, 251, 255, 0.7);
+}
+
   --bs-btn-hover-border-color: #6df0c7;
   --bs-btn-font-weight: 700;
 }

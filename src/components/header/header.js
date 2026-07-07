@@ -1,4 +1,7 @@
 import './header.css'
+import { getCurrentUser } from '../../services/supabase-client.js'
+import { logout } from '../../services/auth.js'
+import { navigateTo } from '../../router.js'
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -19,7 +22,9 @@ function isActiveLink(currentPath, targetPath) {
   return currentPath === targetPath
 }
 
-export function renderHeader(pathname) {
+export async function renderHeader(pathname) {
+  const user = await getCurrentUser()
+
   const links = navItems
     .map((item) => {
       const activeClass = isActiveLink(pathname, item.path) ? 'active' : ''
@@ -33,7 +38,21 @@ export function renderHeader(pathname) {
     })
     .join('')
 
-  return `
+  const ctaButtons = user
+    ? `
+      <div class="d-flex gap-2">
+        <span class="navbar-text text-accent me-2">👤 ${user.email}</span>
+        <button class="btn btn-outline-light btn-sm rounded-pill px-4" id="logoutBtn">Sign Out</button>
+      </div>
+    `
+    : `
+      <div class="d-flex gap-2">
+        <a class="btn btn-outline-light btn-sm rounded-pill px-4" href="/login" data-link>Sign In</a>
+        <a class="btn btn-accent btn-sm rounded-pill px-4" href="/login" data-link>Play Now</a>
+      </div>
+    `
+
+  const headerHTML = `
     <header class="app-header sticky-top">
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-xxl">
@@ -62,13 +81,25 @@ export function renderHeader(pathname) {
               ${links}
             </ul>
 
-            <div class="d-flex gap-2">
-              <a class="btn btn-outline-light btn-sm rounded-pill px-4" href="/login" data-link>Sign In</a>
-              <a class="btn btn-accent btn-sm rounded-pill px-4" href="#" data-link>Play Now</a>
-            </div>
+            ${ctaButtons}
           </div>
         </div>
       </nav>
     </header>
   `
+
+  // Return HTML and attach logout listener
+  return { html: headerHTML, user }
+}
+
+export function attachHeaderListeners() {
+  const logoutBtn = document.getElementById('logoutBtn')
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      const result = await logout()
+      if (result.success) {
+        navigateTo('/')
+      }
+    })
+  }
 }

@@ -4,17 +4,26 @@ import './styles/global.css'
 
 import { renderAppLayout } from './layout/app-layout.js'
 import { getRoute, navigateTo } from './router.js'
+import { attachLoginPageListeners } from './pages/login/login.js'
+import { onAuthStateChange } from './services/supabase-client.js'
 
 const app = document.querySelector('#app')
 
-function renderApp() {
+async function renderApp() {
   const route = getRoute(window.location.pathname)
 
   document.title = `${route.title} | Nexus Game`
-  app.innerHTML = renderAppLayout({
+  app.innerHTML = await renderAppLayout({
     pathname: route.pathname,
     content: route.render(),
   })
+
+  // Attach event listeners for login page
+  if (route.pathname === '/login') {
+    setTimeout(() => {
+      attachLoginPageListeners()
+    }, 0)
+  }
 }
 
 document.addEventListener('click', (event) => {
@@ -35,5 +44,14 @@ document.addEventListener('click', (event) => {
 })
 
 window.addEventListener('popstate', renderApp)
+
+// Handle auth state changes
+onAuthStateChange((event, session) => {
+  console.log('Auth event:', event)
+  if (event === 'SIGNED_OUT') {
+    // Redirect to home after logout
+    navigateTo('/')
+  }
+})
 
 renderApp()
