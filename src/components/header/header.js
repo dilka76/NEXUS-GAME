@@ -6,7 +6,7 @@ import { navigateTo } from '../../router.js'
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Dashboard', path: '/dashboard' },
-  { label: 'Game 101', path: '/games/101' },
+  { label: 'Games', path: '/games' },
   { label: 'Login', path: '/login' },
 ]
 
@@ -15,8 +15,8 @@ function isActiveLink(currentPath, targetPath) {
     return currentPath === '/'
   }
 
-  if (targetPath.startsWith('/games/')) {
-    return currentPath.startsWith('/games/')
+  if (targetPath.startsWith('/games')) {
+    return currentPath.startsWith('/games') || currentPath.startsWith('/game/')
   }
 
   return currentPath === targetPath
@@ -27,6 +27,11 @@ export async function renderHeader(pathname) {
 
   const links = navItems
     .map((item) => {
+      // Hide login link if user is logged in
+      if (item.path === '/login' && user) {
+        return ''
+      }
+
       const activeClass = isActiveLink(pathname, item.path) ? 'active' : ''
       const ariaCurrent = isActiveLink(pathname, item.path) ? 'aria-current="page"' : ''
 
@@ -36,6 +41,7 @@ export async function renderHeader(pathname) {
         </li>
       `
     })
+    .filter(Boolean)
     .join('')
 
   const ctaButtons = user

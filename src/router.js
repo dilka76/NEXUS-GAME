@@ -3,6 +3,9 @@ import { renderGameDetailPage } from './pages/game-detail/game-detail.js'
 import { renderHomePage } from './pages/home/home.js'
 import { renderLoginPage } from './pages/login/login.js'
 import { renderNotFoundPage } from './pages/not-found/not-found.js'
+import { renderGamesPage } from './pages/games/games.js'
+import { renderGameStartPage, startNewGame } from './pages/game-start/game-start.js'
+import { renderGamePlayPage } from './pages/game-play/game-play.js'
 
 function normalizePath(pathname) {
   if (pathname === '/') {
@@ -36,6 +39,33 @@ export function getRoute(pathname) {
       pathname: normalizedPath,
       title: 'Dashboard',
       render: renderDashboardPage,
+    }
+  }
+
+  if (normalizedPath === '/games') {
+    return {
+      pathname: normalizedPath,
+      title: 'My Games',
+      render: renderGamesPage,
+    }
+  }
+
+  if (normalizedPath === '/game/start') {
+    return {
+      pathname: normalizedPath,
+      title: 'Start Game',
+      render: renderGameStartPage,
+      onLoad: startNewGame,
+    }
+  }
+
+  const gamePlayMatch = normalizedPath.match(/^\/game\/(?<gameId>[^/]+)\/play$/)
+  if (gamePlayMatch?.groups?.gameId) {
+    return {
+      pathname: normalizedPath,
+      title: 'Playing',
+      render: () => renderGamePlayPage(decodeURIComponent(gamePlayMatch.groups.gameId)),
+      gameId: decodeURIComponent(gamePlayMatch.groups.gameId),
     }
   }
 

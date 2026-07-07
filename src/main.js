@@ -5,6 +5,8 @@ import './styles/global.css'
 import { renderAppLayout } from './layout/app-layout.js'
 import { getRoute, navigateTo } from './router.js'
 import { attachLoginPageListeners } from './pages/login/login.js'
+import { attachGamesPageListeners } from './pages/games/games.js'
+import { attachGamePlayListeners } from './pages/game-play/game-play.js'
 import { onAuthStateChange } from './services/supabase-client.js'
 
 const app = document.querySelector('#app')
@@ -15,14 +17,33 @@ async function renderApp() {
   document.title = `${route.title} | Nexus Game`
   app.innerHTML = await renderAppLayout({
     pathname: route.pathname,
-    content: route.render(),
+    content: await route.render(),
   })
 
-  // Attach event listeners for login page
+  // Attach event listeners based on page
   if (route.pathname === '/login') {
     setTimeout(() => {
       attachLoginPageListeners()
     }, 0)
+  }
+
+  if (route.pathname === '/games') {
+    setTimeout(() => {
+      attachGamesPageListeners()
+    }, 0)
+  }
+
+  if (route.gameId) {
+    setTimeout(() => {
+      attachGamePlayListeners(route.gameId)
+    }, 0)
+  }
+
+  // Execute onLoad callback if present (for game start page)
+  if (route.onLoad) {
+    setTimeout(() => {
+      route.onLoad()
+    }, 100)
   }
 }
 
