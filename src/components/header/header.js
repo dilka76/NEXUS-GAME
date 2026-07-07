@@ -38,10 +38,10 @@ export function renderHeader(pathname) {
       <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-xxl">
           <a class="navbar-brand d-flex align-items-center gap-2" href="/" data-link>
-            <span class="brand-mark">N</span>
-            <span>
-              <strong class="d-block">Nexus Game</strong>
-              <small class="text-uppercase text-secondary-emphasis">Bootstrap + Vite</small>
+            <span class="brand-icon">◆</span>
+            <span class="brand-text">
+              <strong class="d-block">NEXUS MILLIONAIRE</strong>
+              <small class="text-uppercase">Who Wants to be a Millionaire</small>
             </span>
           </a>
 
@@ -58,13 +58,13 @@ export function renderHeader(pathname) {
           </button>
 
           <div class="collapse navbar-collapse" id="primaryNav">
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-1">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
               ${links}
             </ul>
 
             <div class="d-flex gap-2">
-              <a class="btn btn-outline-light btn-sm rounded-pill px-3" href="/login" data-link>Sign in</a>
-              <a class="btn btn-accent btn-sm rounded-pill px-3" href="/dashboard" data-link>Open dashboard</a>
+              <a class="btn btn-outline-light btn-sm rounded-pill px-4" href="/login" data-link>Sign In</a>
+              <a class="btn btn-accent btn-sm rounded-pill px-4" href="#" data-link>Play Now</a>
             </div>
           </div>
         </div>
