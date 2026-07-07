@@ -1,0 +1,19 @@
+.game-panel {
+  position: relative;
+}
+
+.game-panel::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -30% auto;
+  width: 18rem;
+  height: 18rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(77, 226, 184, 0.25), transparent 65%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+.info-stack > div {
+  background: rgba(255, 255, 255, 0.04);
+}

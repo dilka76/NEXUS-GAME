@@ -1,0 +1,11 @@
+.app-footer {
+  padding-top: 0;
+}
+
+.footer-card {
+  color: var(--text-main);
+}
+
+.footer-card p {
+  font-size: 0.94rem;
+}

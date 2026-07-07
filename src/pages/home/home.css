@@ -1,0 +1,18 @@
+.hero-panel {
+  overflow: hidden;
+}
+
+.home-card,
+.mini-stat {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+}
+
+.mini-stat {
+  min-height: 100%;
+}
+
+.progress {
+  height: 0.7rem;
+  background: rgba(255, 255, 255, 0.08);
+}

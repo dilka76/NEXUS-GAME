@@ -1,0 +1,107 @@
+:root {
+  --bg-ink: #07111f;
+  --bg-mid: #0f1f33;
+  --bg-panel: rgba(13, 24, 39, 0.82);
+  --text-main: #eef4ff;
+  --text-muted: #9fb0cb;
+  --line: rgba(159, 176, 203, 0.18);
+  --accent: #4de2b8;
+  --accent-2: #8db8ff;
+  --warning: #ffca7a;
+  --shadow-lg: 0 24px 60px rgba(2, 8, 20, 0.36);
+  --radius-xl: 1.5rem;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at top left, rgba(77, 226, 184, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(141, 184, 255, 0.14), transparent 25%),
+    linear-gradient(180deg, var(--bg-mid), var(--bg-ink) 42%, #040a13 100%);
+  font-family: Inter, "Segoe UI", Tahoma, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.app-main {
+  position: relative;
+  isolation: isolate;
+  padding: 2rem 0 3rem;
+}
+
+.app-main::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(130deg, rgba(77, 226, 184, 0.04), transparent 34%),
+    radial-gradient(circle at center, rgba(141, 184, 255, 0.05), transparent 60%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.surface {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(18px);
+}
+
+.section-heading {
+  letter-spacing: -0.04em;
+}
+
+.soft-border {
+  border: 1px solid var(--line);
+}
+
+.muted-text {
+  color: var(--text-muted);
+}
+
+.accent-text {
+  color: var(--accent);
+}
+
+.hero-badge {
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+
+.fade-in-up {
+  animation: fade-in-up 420ms ease-out both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .app-main {
+    padding-top: 1.25rem;
+  }
+}

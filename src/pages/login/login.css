@@ -1,0 +1,21 @@
+.login-card .form-control {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.login-card .form-control::placeholder {
+  color: rgba(238, 244, 255, 0.42);
+}
+
+.login-card .form-control:focus {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  border-color: rgba(77, 226, 184, 0.6);
+  box-shadow: 0 0 0 0.2rem rgba(77, 226, 184, 0.12);
+}
+
+.login-card .form-label,
+.login-card .form-check-label {
+  color: var(--text-muted);
+}

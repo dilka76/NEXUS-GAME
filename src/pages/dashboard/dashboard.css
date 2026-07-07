@@ -1,0 +1,20 @@
+.stat-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+}
+
+.activity-list .list-group-item {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.activity-step {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(77, 226, 184, 0.14);
+  color: var(--accent);
+  font-size: 0.75rem;
+  flex: 0 0 auto;
+}
