@@ -9,7 +9,11 @@
  * Usage: node scripts/seed.js
  */
 
+import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+
+// Load environment variables from .env.local
+dotenv.config({ path: ".env.local" });
 
 // Get Supabase credentials from environment variables
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || "https://your-project.supabase.co";
