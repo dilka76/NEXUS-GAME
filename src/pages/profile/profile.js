@@ -1,6 +1,6 @@
 import './profile.css'
 import { navigateTo } from '../../router.js'
-import { getProfile, saveProfile, validateAvatarFile } from '../../services/profile.js'
+import { createCroppedAvatarFile, getProfile, saveProfile, validateAvatarFile } from '../../services/profile.js'
 
 function getInitials(nickname, email) {
   const source = nickname || email || 'Player'
@@ -126,6 +126,7 @@ export function attachProfilePageListeners() {
   const resetProfileBtn = document.getElementById('resetProfileBtn')
   const avatarPreviewFrame = document.getElementById('avatarPreviewFrame')
   const profileNicknameDisplay = document.getElementById('profileNicknameDisplay')
+  let preparedAvatarFile = null
 
   if (!profileForm || !nicknameInput || !avatarInput) {
     return
@@ -133,11 +134,12 @@ export function attachProfilePageListeners() {
 
   let previewObjectUrl = ''
 
-  avatarInput.addEventListener('change', () => {
+  avatarInput.addEventListener('change', async () => {
     clearMessages()
 
     const file = avatarInput.files?.[0]
     if (!file) {
+      preparedAvatarFile = null
       restoreAvatarPreview()
       return
     }
@@ -146,15 +148,27 @@ export function attachProfilePageListeners() {
     if (!validation.success) {
       showError(validation.error)
       avatarInput.value = ''
+      preparedAvatarFile = null
       restoreAvatarPreview()
       return
     }
+
+    const processedAvatar = await createCroppedAvatarFile(file)
+    if (!processedAvatar.success) {
+      showError(processedAvatar.error)
+      avatarInput.value = ''
+      preparedAvatarFile = null
+      restoreAvatarPreview()
+      return
+    }
+
+    preparedAvatarFile = processedAvatar.file
 
     if (previewObjectUrl) {
       URL.revokeObjectURL(previewObjectUrl)
     }
 
-    previewObjectUrl = URL.createObjectURL(file)
+    previewObjectUrl = URL.createObjectURL(preparedAvatarFile)
     avatarPreviewFrame.innerHTML = `<img src="${previewObjectUrl}" alt="Avatar preview" class="profile-avatar-image" id="avatarPreviewImage" />`
   })
 
@@ -162,6 +176,7 @@ export function attachProfilePageListeners() {
     clearMessages()
     nicknameInput.value = nicknameInput.defaultValue
     avatarInput.value = ''
+    preparedAvatarFile = null
     restoreAvatarPreview()
     profileNicknameDisplay.textContent = nicknameInput.defaultValue || 'Player'
   })
@@ -170,14 +185,8 @@ export function attachProfilePageListeners() {
     event.preventDefault()
     clearMessages()
 
-    const avatarFile = avatarInput.files?.[0] || null
+    const avatarFile = preparedAvatarFile || avatarInput.files?.[0] || null
     const nickname = nicknameInput.value
-
-    const validation = avatarFile ? validateAvatarFile(avatarFile) : { success: true }
-    if (!validation.success) {
-      showError(validation.error)
-      return
-    }
 
     saveProfileBtn.disabled = true
     saveProfileBtn.textContent = 'Saving...'
