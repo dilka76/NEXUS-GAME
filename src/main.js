@@ -6,6 +6,7 @@ import { renderAppLayout } from './layout/app-layout.js'
 import { getRoute, navigateTo } from './router.js'
 import { attachLoginPageListeners } from './pages/login/login.js'
 import { attachProfilePageListeners } from './pages/profile/profile.js'
+import { attachAdminPageListeners } from './pages/admin/admin.js'
 import { attachGamesPageListeners } from './pages/games/games.js'
 import { attachGamePlayListeners } from './pages/game-play/game-play.js'
 import { onAuthStateChange } from './services/supabase-client.js'
@@ -31,6 +32,12 @@ async function renderApp() {
   if (route.pathname === '/profile') {
     setTimeout(() => {
       attachProfilePageListeners()
+    }, 0)
+  }
+
+  if (route.pathname === '/admin') {
+    setTimeout(() => {
+      attachAdminPageListeners()
     }, 0)
   }
 

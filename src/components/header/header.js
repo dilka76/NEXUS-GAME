@@ -1,5 +1,5 @@
 import './header.css'
-import { getCurrentUser } from '../../services/supabase-client.js'
+import { getProfile } from '../../services/profile.js'
 import { logout } from '../../services/auth.js'
 import { navigateTo } from '../../router.js'
 
@@ -7,6 +7,7 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Dashboard', path: '/dashboard' },
   { label: 'Profile', path: '/profile', requiresUser: true },
+  { label: 'Admin', path: '/admin', requiresAdmin: true },
   { label: 'Games', path: '/games' },
   { label: 'Login', path: '/login' },
 ]
@@ -24,15 +25,26 @@ function isActiveLink(currentPath, targetPath) {
     return currentPath === '/profile'
   }
 
+  if (targetPath === '/admin') {
+    return currentPath === '/admin'
+  }
+
   return currentPath === targetPath
 }
 
 export async function renderHeader(pathname) {
-  const user = await getCurrentUser()
+  const profileResult = await getProfile()
+  const user = profileResult.success ? profileResult.user : null
+  const profile = profileResult.success ? profileResult.profile : null
+  const isAdmin = profile?.role === 'admin'
 
   const links = navItems
     .map((item) => {
       if (item.requiresUser && !user) {
+        return ''
+      }
+
+      if (item.requiresAdmin && !isAdmin) {
         return ''
       }
 
@@ -56,7 +68,8 @@ export async function renderHeader(pathname) {
   const ctaButtons = user
     ? `
       <div class="d-flex gap-2">
-        <a class="navbar-text text-accent me-2 text-decoration-none" href="/profile" data-link>👤 ${user.user_metadata?.nickname || user.email}</a>
+        <a class="navbar-text text-accent me-2 text-decoration-none" href="/profile" data-link>👤 ${profile?.nickname || user.email}</a>
+        ${isAdmin ? '<a class="btn btn-outline-light btn-sm rounded-pill px-4" href="/admin" data-link>Admin</a>' : ''}
         <button class="btn btn-outline-light btn-sm rounded-pill px-4" id="logoutBtn">Sign Out</button>
       </div>
     `

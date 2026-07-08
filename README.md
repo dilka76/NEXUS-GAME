@@ -202,6 +202,7 @@ npm run build
 - Game data is fetched from Supabase in service modules rather than directly inside page renderers.
 - Avatar uploads are cropped client-side before upload and limited to 500KB after processing.
 - Public read access is intended for quiz content, while user-owned records remain protected by RLS.
+- Admin access is controlled through `public.profiles.role`; set a user to `admin` in Supabase before using the admin page.
 
 ## Related Documentation
 

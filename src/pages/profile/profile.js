@@ -48,7 +48,7 @@ export async function renderProfilePage() {
             <div class="col-lg-5">
               <div class="surface rounded-4 p-4 p-lg-5 h-100 profile-summary-panel">
                 <div class="profile-avatar-frame mx-auto mb-4" id="avatarPreviewFrame">
-                  ${profile.avatarUrl ? `<img src="${profile.avatarUrl}" alt="Avatar preview" class="profile-avatar-image" id="avatarPreviewImage" />` : `<span class="profile-avatar-initials" id="avatarPreviewInitials">${initials}</span>`}
+                    ${profile.avatar_url ? `<img src="${profile.avatar_url}" alt="Avatar preview" class="profile-avatar-image" id="avatarPreviewImage" />` : `<span class="profile-avatar-initials" id="avatarPreviewInitials">${initials}</span>`}
                 </div>
 
                 <div class="text-center">

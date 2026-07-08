@@ -3,6 +3,7 @@ import { renderGameDetailPage } from './pages/game-detail/game-detail.js'
 import { renderHomePage } from './pages/home/home.js'
 import { renderLoginPage } from './pages/login/login.js'
 import { renderProfilePage } from './pages/profile/profile.js'
+import { renderAdminPage } from './pages/admin/admin.js'
 import { renderNotFoundPage } from './pages/not-found/not-found.js'
 import { renderGamesPage } from './pages/games/games.js'
 import { renderGameStartPage, startNewGame } from './pages/game-start/game-start.js'
@@ -48,6 +49,14 @@ export function getRoute(pathname) {
       pathname: normalizedPath,
       title: 'Profile',
       render: renderProfilePage,
+    }
+  }
+
+  if (normalizedPath === '/admin') {
+    return {
+      pathname: normalizedPath,
+      title: 'Admin',
+      render: renderAdminPage,
     }
   }
 

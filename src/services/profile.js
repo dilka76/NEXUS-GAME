@@ -39,6 +39,37 @@ export function validateAvatarFile(file) {
   }
 }
 
+function normalizeProfileRow(profileRow, user) {
+  return {
+    id: profileRow?.id || user.id,
+    email: profileRow?.email || user.email || '',
+    nickname: profileRow?.nickname || '',
+    avatar_url: profileRow?.avatar_url || '',
+    role: profileRow?.role || 'user',
+  }
+}
+
+async function upsertProfileFromUser(user, overrides = {}) {
+  const profileRow = normalizeProfileRow(overrides, user)
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert(profileRow, { onConflict: 'id' })
+    .select('id, email, nickname, avatar_url, role')
+    .single()
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
+
+  return {
+    success: true,
+    profile: data,
+  }
+}
+
 function loadImageFromFile(file) {
   return new Promise((resolve, reject) => {
     const image = new Image()
@@ -154,13 +185,43 @@ export async function getProfile() {
     }
   }
 
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, email, nickname, avatar_url, role')
+    .eq('id', user.id)
+    .maybeSingle()
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
+
+  if (!data) {
+    const createdProfile = await upsertProfileFromUser(user, {
+      id: user.id,
+      email: user.email || '',
+      nickname: user.user_metadata?.nickname || '',
+      avatar_url: user.user_metadata?.avatar_url || '',
+      role: user.user_metadata?.role || user.app_metadata?.role || 'user',
+    })
+
+    if (!createdProfile.success) {
+      return createdProfile
+    }
+
+    return {
+      success: true,
+      user,
+      profile: createdProfile.profile,
+    }
+  }
+
   return {
     success: true,
     user,
-    profile: {
-      nickname: user.user_metadata?.nickname || '',
-      avatarUrl: user.user_metadata?.avatar_url || '',
-    },
+    profile: data,
   }
 }
 
@@ -190,8 +251,17 @@ export async function saveProfile({ nickname, avatarFile }) {
     }
   }
 
+  const currentProfileResult = await getProfile()
+  if (!currentProfileResult.success) {
+    return currentProfileResult
+  }
+
   const nextProfileData = {
+    id: user.id,
+    email: user.email || currentProfileResult.profile.email || '',
     nickname: normalizedNickname,
+    avatar_url: currentProfileResult.profile.avatar_url || '',
+    role: currentProfileResult.profile.role || 'user',
   }
 
   if (avatarFile) {
@@ -218,9 +288,46 @@ export async function saveProfile({ nickname, avatarFile }) {
     nextProfileData.avatar_url = publicUrlData.publicUrl
   }
 
-  const { data, error } = await supabase.auth.updateUser({
-    data: nextProfileData,
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert(nextProfileData, { onConflict: 'id' })
+    .select('id, email, nickname, avatar_url, role')
+    .single()
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
+
+  const authUpdate = await supabase.auth.updateUser({
+    data: {
+      nickname: data.nickname,
+      avatar_url: data.avatar_url,
+      role: data.role,
+    },
   })
+
+  if (authUpdate.error) {
+    return {
+      success: false,
+      error: authUpdate.error.message,
+    }
+  }
+
+  return {
+    success: true,
+    user: authUpdate.data.user,
+    message: 'Profile updated successfully.',
+  }
+}
+
+export async function listProfiles() {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, email, nickname, avatar_url, role, created_at, updated_at')
+    .order('updated_at', { ascending: false })
 
   if (error) {
     return {
@@ -231,7 +338,49 @@ export async function saveProfile({ nickname, avatarFile }) {
 
   return {
     success: true,
-    user: data.user,
-    message: 'Profile updated successfully.',
+    profiles: data || [],
+  }
+}
+
+export async function saveProfileRecord(profile) {
+  const payload = {
+    id: profile.id,
+    email: profile.email || '',
+    nickname: profile.nickname || '',
+    avatar_url: profile.avatar_url || '',
+    role: profile.role || 'user',
+  }
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .upsert(payload, { onConflict: 'id' })
+    .select('id, email, nickname, avatar_url, role, created_at, updated_at')
+    .single()
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
+
+  return {
+    success: true,
+    profile: data,
+  }
+}
+
+export async function deleteProfileRecord(profileId) {
+  const { error } = await supabase.from('profiles').delete().eq('id', profileId)
+
+  if (error) {
+    return {
+      success: false,
+      error: error.message,
+    }
+  }
+
+  return {
+    success: true,
   }
 }
