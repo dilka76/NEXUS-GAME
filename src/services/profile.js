@@ -4,6 +4,7 @@ const AVATAR_BUCKET = 'avatars'
 const MAX_AVATAR_SIZE = 500 * 1024
 const MAX_NICKNAME_LENGTH = 32
 const AVATAR_OUTPUT_SIZE = 512
+const ADMIN_EMAILS = new Set(['vader@abv.bg'])
 
 function normalizeNickname(nickname) {
   return nickname.trim().replace(/\s+/g, ' ').slice(0, MAX_NICKNAME_LENGTH)
@@ -47,6 +48,16 @@ function normalizeProfileRow(profileRow, user) {
     avatar_url: profileRow?.avatar_url || '',
     role: profileRow?.role || 'user',
   }
+}
+
+function resolveProfileRole(user, profileRow = {}) {
+  const email = (user?.email || profileRow?.email || '').toLowerCase()
+
+  if (ADMIN_EMAILS.has(email)) {
+    return 'admin'
+  }
+
+  return profileRow?.role || user?.user_metadata?.role || user?.app_metadata?.role || 'user'
 }
 
 async function upsertProfileFromUser(user, overrides = {}) {
@@ -204,7 +215,7 @@ export async function getProfile() {
       email: user.email || '',
       nickname: user.user_metadata?.nickname || '',
       avatar_url: user.user_metadata?.avatar_url || '',
-      role: user.user_metadata?.role || user.app_metadata?.role || 'user',
+      role: resolveProfileRole(user),
     })
 
     if (!createdProfile.success) {
@@ -215,6 +226,24 @@ export async function getProfile() {
       success: true,
       user,
       profile: createdProfile.profile,
+    }
+  }
+
+  const resolvedRole = resolveProfileRole(user, data)
+  if (resolvedRole !== data.role) {
+    const updatedProfile = await upsertProfileFromUser(user, {
+      ...data,
+      role: resolvedRole,
+    })
+
+    if (!updatedProfile.success) {
+      return updatedProfile
+    }
+
+    return {
+      success: true,
+      user,
+      profile: updatedProfile.profile,
     }
   }
 
