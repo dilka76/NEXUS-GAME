@@ -403,7 +403,11 @@
   }
 
   .game-sidebar {
-    display: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
   }
 }
 

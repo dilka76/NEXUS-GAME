@@ -145,7 +145,9 @@ export function attachGamePlayListeners(gameId) {
       answered = true
       selectedAnswer = btn
 
+      const rawValue = btn.getAttribute('data-is-correct')
       const isCorrect = btn.dataset.isCorrect === 'true'
+      console.log('Button clicked:', btn.textContent.trim(), 'Raw:', rawValue, 'isCorrect:', isCorrect)
 
       // Highlight selected answer
       answerBtns.forEach((b) => b.classList.remove('selected', 'correct', 'incorrect'))

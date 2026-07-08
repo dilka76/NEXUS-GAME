@@ -6,6 +6,7 @@ import { navigateTo } from '../../router.js'
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'Dashboard', path: '/dashboard' },
+  { label: 'Profile', path: '/profile', requiresUser: true },
   { label: 'Games', path: '/games' },
   { label: 'Login', path: '/login' },
 ]
@@ -19,6 +20,10 @@ function isActiveLink(currentPath, targetPath) {
     return currentPath.startsWith('/games') || currentPath.startsWith('/game/')
   }
 
+  if (targetPath === '/profile') {
+    return currentPath === '/profile'
+  }
+
   return currentPath === targetPath
 }
 
@@ -27,6 +32,10 @@ export async function renderHeader(pathname) {
 
   const links = navItems
     .map((item) => {
+      if (item.requiresUser && !user) {
+        return ''
+      }
+
       // Hide login link if user is logged in
       if (item.path === '/login' && user) {
         return ''
@@ -47,7 +56,7 @@ export async function renderHeader(pathname) {
   const ctaButtons = user
     ? `
       <div class="d-flex gap-2">
-        <span class="navbar-text text-accent me-2">👤 ${user.email}</span>
+        <a class="navbar-text text-accent me-2 text-decoration-none" href="/profile" data-link>👤 ${user.user_metadata?.nickname || user.email}</a>
         <button class="btn btn-outline-light btn-sm rounded-pill px-4" id="logoutBtn">Sign Out</button>
       </div>
     `

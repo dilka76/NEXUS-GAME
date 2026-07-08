@@ -70,6 +70,7 @@ export function renderDashboardPage() {
           <div class="surface rounded-4 p-4 h-100">
             <h2 class="h5 mb-3">Quick actions</h2>
             <div class="d-grid gap-2">
+              <a class="btn btn-outline-light rounded-pill" href="/profile" data-link>Update profile</a>
               <a class="btn btn-accent rounded-pill" href="/login" data-link>Review sign-in flow</a>
               <a class="btn btn-outline-light rounded-pill" href="/games/307" data-link>Inspect beta game</a>
               <a class="btn btn-outline-light rounded-pill" href="/" data-link>Return to home</a>

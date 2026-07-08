@@ -132,10 +132,6 @@
   color: rgba(244, 251, 255, 0.7);
 }
 
-  --bs-btn-hover-border-color: #6df0c7;
-  --bs-btn-font-weight: 700;
-}
-
 @media (max-width: 991.98px) {
   .navbar-collapse {
     margin-top: 1rem;
